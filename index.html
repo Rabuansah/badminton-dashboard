@@ -650,7 +650,7 @@
           teams = d.teams.map((t) => ({ ...t, active: true }));
           matches = d.matches.map((m) => ({ ...m, scoreA: m.scoreA == null ? null : Number(m.scoreA), scoreB: m.scoreB == null ? null : Number(m.scoreB), round: m.round || null }));
           $("eventTitle").textContent = d.eventTitle || "Badminton Championship";
-          $("eventSub").textContent = `Round robin · Target ${d.targetScore || 42} poin · Tukar sisi saat ${d.switchSideAt || 21}`;
+          $("eventSub").textContent = `PB. Pukul Terus Pantang Nyerah · Sistem Kemenangan ${d.targetScore || 42} poin (selisih 2 poin) · Tukar tempat saat poin ${d.switchSideAt || 21}`;
           $("connection").textContent = "● TERHUBUNG";
           $("connection").style.borderColor = "#74c89b";
           render();
