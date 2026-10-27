@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Badminton Tournament Dashboard</title>
+    <style>
+      :root {
+        --bg: #f4f7f5;
+        --card: #fff;
+        --ink: #172b25;
+        --muted: #6d7e77;
+        --green: #145c43;
+        --mint: #e5f4ec;
+        --line: #e2e9e5;
+        --gold: #d5a947;
+        --red: #b83b3b;
+        --shadow: 0 8px 26px #173c2a0b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          sans-serif;
+        color: var(--ink);
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      .hero {
+        background: linear-gradient(120deg, #103c2d, #17664a);
+        color: #fff;
+        padding: 26px max(18px, calc((100% - 1180px) / 2)) 30px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: center;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: #ffffff1b;
+        display: grid;
+        place-items: center;
+        font-size: 24px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: #c1e1d0;
+        font-weight: 800;
+      }
+      .hero h1 {
+        font-size: clamp(23px, 4vw, 34px);
+        margin: 4px 0;
+      }
+      .hero p {
+        color: #d6e8df;
+        margin: 6px 0 0;
+        font-size: 14px;
+      }
+      .live {
+        border: 1px solid #74c89b;
+        background: #ffffff12;
+        padding: 7px 11px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: -14px auto 0;
+        padding: 0 18px 40px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+      .stat,
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 17px;
+        box-shadow: var(--shadow);
+      }
+      .stat {
+        padding: 17px;
+      }
+      .stat label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .stat strong {
+        display: block;
+        font-size: 27px;
+        margin-top: 5px;
+      }
+      .stat small {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 20px 0 14px;
+      }
+      .tab {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 15px;
+        background: #fff;
+        color: var(--muted);
+        font-weight: 750;
+        cursor: pointer;
+      }
+      .tab.active {
+        background: var(--green);
+        border-color: var(--green);
+        color: #fff;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(290px, 0.8fr);
+        gap: 15px;
+      }
+      .panel {
+        padding: 19px;
+        min-width: 0;
+      }
+      .panel h2 {
+        font-size: 17px;
+        margin: 0 0 5px;
+      }
+      .sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 16px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+      }
+      .toolbar input,
+      .toolbar select,
+      .field input,
+      .field select {
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 10px;
+        background: #fff;
+        color: var(--ink);
+        min-width: 0;
+      }
+      .toolbar input {
+        flex: 1;
+        min-width: 150px;
+      }
+      .tablewrap {
+        overflow: auto;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+      th {
+        text-align: left;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        background: #f7faf8;
+      }
+      td,
+      th {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--line);
+      }
+      td.num,
+      th.num {
+        text-align: right;
+      }
+      .rank {
+        display: inline-grid;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        background: #edf3ef;
+        font-weight: 800;
+      }
+      .rank.first {
+        background: #fff1c9;
+        color: #795b11;
+      }
+      .team {
+        font-weight: 750;
+      }
+      .diff.pos {
+        color: var(--green);
+        font-weight: 800;
+      }
+      .diff.neg {
+        color: var(--red);
+        font-weight: 800;
+      }
+      .matchlist {
+        display: grid;
+        gap: 10px;
+      }
+      .match {
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        padding: 13px;
+      }
+      .matchhead {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .status {
+        font-size: 10px;
+        font-weight: 850;
+        padding: 5px 8px;
+        border-radius: 999px;
+        background: #f0f2f1;
+        color: #67746e;
+      }
+      .status.done {
+        background: #e4f5eb;
+        color: #176444;
+      }
+      .status.live {
+        background: #fff1d6;
+        color: #8a5b0b;
+      }
+      .versus {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 8px;
+      }
+      .side {
+        font-weight: 750;
+        min-width: 0;
+      }
+      .side:last-child {
+        text-align: right;
+      }
+      .score {
+        font-size: 20px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+      .vs {
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .smallmeta {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 9px;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .pill {
+        display: inline-block;
+        padding: 4px 7px;
+        background: var(--mint);
+        color: var(--green);
+        border-radius: 7px;
+        font-size: 10px;
+        font-weight: 800;
+      }
+      .empty {
+        padding: 24px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .notice {
+        margin-top: 14px;
+        background: #edf6f1;
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: #426355;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+      .admin {
+        margin-top: 15px;
+      }
+      .admin summary {
+        cursor: pointer;
+        font-weight: 800;
+      }
+      .formgrid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .field {
+        display: grid;
+        gap: 5px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .field.full {
+        grid-column: 1/-1;
+      }
+      .btn {
+        border: 0;
+        border-radius: 10px;
+        padding: 11px 14px;
+        background: var(--green);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .btn.secondary {
+        background: #edf3ef;
+        color: var(--green);
+        border: 1px solid var(--line);
+      }
+      .btn.danger {
+        background: #fff0f0;
+        color: var(--red);
+      }
+      .btnrow {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+      }
+      .msg {
+        font-size: 12px;
+        margin-top: 10px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+      .footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 11px;
+        padding: 24px 0 0;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 800px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .stats {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .hero {
+          padding-top: 20px;
+        }
+        .wrap {
+          margin-top: -10px;
+        }
+        .panel {
+          padding: 15px;
+        }
+      }
+      @media (max-width: 420px) {
+        .stat {
+          padding: 13px;
+        }
+        .stat strong {
+          font-size: 23px;
+        }
+        .formgrid {
+          grid-template-columns: 1fr;
+        }
+        .field.full {
+          grid-column: auto;
+        }
+        .hero p {
+          max-width: 270px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="top">
+        <div class="brand">
+          <div class="logo">🏸</div>
+          <div>
+            <div class="eyebrow">Tournament PB PTPN</div>
+            <h1 id="eventTitle">PB PTPN Championship</h1>
+            <p id="eventSub">PB. Pukul Terus Pantang Nyerah · Sistem Kemenangan 42 poin (Selisih 2 Poin) · Tukar Tempat Saat Poin 21</p>
+          </div>
+        </div>
+        <span class="live" id="connection">● MODE DEMO</span>
+      </div>
+    </header>
+    <main class="wrap">
+      <section class="stats">
+        <div class="stat"><label>Total Tim</label><strong id="statTeams">7</strong><small>Tim aktif</small></div>
+        <div class="stat"><label>Pertandingan Selesai</label><strong id="statDone">0/21</strong><small id="statProgress">0% selesai</small></div>
+        <div class="stat"><label>Belum Dimainkan</label><strong id="statRemaining">21</strong><small>Termasuk yang sedang berjalan</small></div>
+        <div class="stat"><label>Pemuncak Klasemen</label><strong id="statLeader" style="font-size: 19px">—</strong><small id="statLeaderMeta">Belum ada hasil</small></div>
+      </section>
+      <nav class="tabs">
+        <button class="tab active" data-tab="overview">Ringkasan</button><button class="tab" data-tab="standings">Klasemen</button><button class="tab" data-tab="matches">Jadwal & Hasil</button
+        ><button class="tab" data-tab="opponents">Lawan Belum Dihadapi</button>
+      </nav>
+      <section id="overview" class="view">
+        <div class="layout">
+          <article class="panel">
+            <h2>Jadwal & hasil pertandingan</h2>
+            <p class="sub">Pantau status setiap pasangan tim.</p>
+            <div class="toolbar">
+              <input id="searchMatch" placeholder="Cari nama tim…" /><select id="statusFilter">
+                <option value="all">Semua status</option>
+                <option value="Belum">Belum bertanding</option>
+                <option value="Berlangsung">Berlangsung</option>
+                <option value="Selesai">Selesai</option>
+              </select>
+            </div>
+            <div id="matchList" class="matchlist"></div>
+            <div class="notice">Aturan skor: satu permainan hingga 42 poin. Saat salah satu tim pertama kali mencapai 21, tukar sisi dan istirahat singkat. Skor pada dashboard adalah skor akhir pertandingan.</div>
+          </article>
+          <aside class="panel">
+            <h2>Klasemen sementara</h2>
+            <p class="sub">Diperbarui dari hasil pertandingan yang tersimpan.</p>
+            <div id="miniStandings" class="tablewrap"></div>
+            <div class="btnrow"><button class="btn secondary" onclick="switchTab('standings')">Lihat klasemen lengkap →</button></div>
+            <details class="admin">
+              <summary>🔐 Panel operator</summary>
+              <p class="sub" style="margin-top: 12px">Dashboard terhubung ke Google Sheets melalui Web App Apps Script. Masukkan URL API sekali pada perangkat ini. Kunci operator hanya diperlukan untuk perubahan data.</p>
+              <div class="formgrid">
+                <label class="field full">URL Web App Google Apps Script<input id="apiUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec" /></label>
+                <div class="field full"><button class="btn secondary" id="saveApi" type="button">Simpan URL & hubungkan</button></div>
+                <label class="field full">Kunci operator<input id="adminKey" type="password" placeholder="Kunci dari pengelola aplikasi" /></label><label class="field full">Pertandingan<select id="editMatch"></select></label
+                ><label class="field">Skor tim kiri<input id="scoreA" type="number" min="0" max="999" placeholder="Contoh: 41" /></label
+                ><label class="field">Skor tim kanan<input id="scoreB" type="number" min="0" max="999" placeholder="Contoh: 43" /></label>
+              </div>
+              <div class="btnrow"><button class="btn" id="saveScore">Simpan skor akhir</button><button class="btn secondary" id="setLive">Tandai berlangsung</button><button class="btn danger" id="clearScore">Batalkan hasil</button></div>
+              <div id="adminMsg" class="msg" role="status"></div>
+              <hr style="border: 0; border-top: 1px solid var(--line); margin: 18px 0" />
+              <h2 style="font-size: 14px">Pengaturan tim</h2>
+              <div class="formgrid" style="margin-top: 10px">
+                <label class="field full">Nama tim baru<input id="newTeam" placeholder="Contoh: Tim H" /></label>
+              </div>
+              <div class="btnrow"><button class="btn secondary" id="addTeam">+ Tambah tim</button></div>
+              <div class="msg">Menambah tim akan membuat pasangan pertandingan baru. Jika turnamen sudah dimulai, panitia perlu memastikan jadwal tambahan diumumkan dengan benar.</div>
+            </details>
+          </aside>
+        </div>
+      </section>
+      <section id="standings" class="view hidden">
+        <article class="panel">
+          <h2>Klasemen lengkap</h2>
+          <p class="sub">Urutan: kemenangan → selisih poin → total poin diperoleh. Pertemuan langsung dapat dijadikan aturan lanjutan bila panitia menyetujuinya.</p>
+          <div id="fullStandings" class="tablewrap"></div>
+        </article>
+      </section>
+      <section id="matches" class="view hidden">
+        <article class="panel">
+          <h2>Semua pertandingan</h2>
+          <p class="sub" id="matchSummary"></p>
+          <div class="toolbar">
+            <input id="searchAll" placeholder="Cari tim atau pertandingan…" /><select id="statusAll">
+              <option value="all">Semua status</option>
+              <option value="Belum">Belum bertanding</option>
+              <option value="Berlangsung">Berlangsung</option>
+              <option value="Selesai">Selesai</option>
+            </select>
+          </div>
+          <div id="allMatchList" class="matchlist"></div>
+        </article>
+      </section>
+      <section id="opponents" class="view hidden">
+        <article class="panel">
+          <h2>Lawan yang belum dihadapi</h2>
+          <p class="sub">Pilih tim untuk melihat daftar lawan yang belum bertanding dan hasil pertemuan yang sudah selesai.</p>
+          <div class="toolbar"><select id="teamOpponent"></select></div>
+          <div id="opponentList" class="matchlist"></div>
+        </article>
+      </section>
+      <div class="footer">Badminton Tournament Dashboard · Data dibaca dari Google Sheets · Pembaruan otomatis setiap 30 detik.</div>
+    </main>
+    <script>
+      const DEFAULT_API = "https://script.google.com/macros/s/AKfycbxwaGoP92epqGl7Itvu9NljD3GPfFSHiVjm7d0dw1lPFu82_r4k1ntNTJWHjUiVd5sg/exec";
+      let apiUrl = localStorage.getItem("badminton_api_url") || DEFAULT_API;
+      let teams = [],
+        matches = [],
+        results = {},
+        seq = 1,
+        loading = false;
+      const $ = (id) => document.getElementById(id);
+      function esc(s) {
+        return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+      }
+      function getTeam(id) {
+        return teams.find((t) => t.id === id)?.name || "Tim tidak ditemukan";
+      }
+      function activeTeams() {
+        return teams.filter((t) => t.active);
+      }
+      function statusFor(m) {
+        return m.status || "Belum";
+      }
+      function standings() {
+        return activeTeams()
+          .map((t) => {
+            let played = 0,
+              wins = 0,
+              losses = 0,
+              forPts = 0,
+              against = 0;
+            matches
+              .filter((m) => m.a === t.id || m.b === t.id)
+              .forEach((m) => {
+                if (m.status !== "Selesai" || m.scoreA == null || m.scoreB == null) return;
+                const own = m.a === t.id ? m.scoreA : m.scoreB,
+                  opp = m.a === t.id ? m.scoreB : m.scoreA;
+                played++;
+                forPts += own;
+                against += opp;
+                if (own > opp) wins++;
+                else losses++;
+              });
+            return { ...t, played, wins, losses, forPts, against, diff: forPts - against };
+          })
+          .sort((a, b) => b.wins - a.wins || b.diff - a.diff || b.forPts - a.forPts || a.name.localeCompare(b.name, "id"));
+      }
+      function matchCard(m) {
+        const s = statusFor(m),
+          has = m.scoreA != null && m.scoreB != null;
+        return `<div class="match"><div class="matchhead"><span class="pill">${esc(m.id)}</span><span class="status ${s === "Selesai" ? "done" : s === "Berlangsung" ? "live" : ""}">${s === "Belum" ? "Belum bertanding" : esc(s)}</span></div><div class="versus"><div class="side">${esc(getTeam(m.a))}</div><div class="score">${has ? `${m.scoreA} – ${m.scoreB}` : "— : —"}</div><div class="side">${esc(getTeam(m.b))}</div></div><div class="smallmeta"><span>${m.round ? `Ronde ${m.round}` : "Round robin"}</span><span>${has ? "Skor akhir" : ""}</span></div></div>`;
+      }
+      function standingsHTML(list, mini = false) {
+        if (!list.length) return '<div class="empty">Belum ada tim aktif.</div>';
+        return `<table><thead><tr><th>#</th><th>Tim</th><th class="num">Main</th><th class="num">M</th><th class="num">K</th>${mini ? "" : '<th class="num">Poin +</th><th class="num">Poin −</th>'}<th class="num">Selisih</th></tr></thead><tbody>${list.map((t, i) => `<tr><td><span class="rank ${i === 0 && t.played ? "first" : ""}">${i + 1}</span></td><td class="team">${esc(t.name)}</td><td class="num">${t.played}</td><td class="num">${t.wins}</td><td class="num">${t.losses}</td>${mini ? "" : `<td class="num">${t.forPts}</td><td class="num">${t.against}</td>`}<td class="num diff ${t.diff > 0 ? "pos" : t.diff < 0 ? "neg" : ""}">${t.diff > 0 ? "+" : ""}${t.diff}</td></tr>`).join("")}</tbody></table>`;
+      }
+      function renderMatches(target, query = "", status = "all") {
+        const q = query.trim().toLowerCase();
+        const list = matches.filter((m) => (status === "all" || statusFor(m) === status) && (!q || `${getTeam(m.a)} ${getTeam(m.b)} ${m.id}`.toLowerCase().includes(q)));
+        $(target).innerHTML = list.length ? list.map(matchCard).join("") : '<div class="empty">Tidak ada pertandingan yang sesuai.</div>';
+      }
+      function render() {
+        const active = activeTeams(),
+          done = matches.filter((m) => statusFor(m) === "Selesai").length,
+          live = matches.filter((m) => statusFor(m) === "Berlangsung").length,
+          total = matches.length,
+          remaining = total - done,
+          table = standings();
+        $("statTeams").textContent = active.length;
+        $("statDone").textContent = `${done}/${total}`;
+        $("statProgress").textContent = `${total ? Math.round((done / total) * 100) : 0}% selesai`;
+        $("statRemaining").textContent = remaining;
+        $("statLeader").textContent = table[0]?.name || "—";
+        $("statLeaderMeta").textContent = table[0]?.played ? `${table[0].wins} menang · selisih ${table[0].diff >= 0 ? "+" : ""}${table[0].diff}` : "Belum ada hasil";
+        $("miniStandings").innerHTML = standingsHTML(table.slice(0, 5), true);
+        $("fullStandings").innerHTML = standingsHTML(table, false);
+        renderMatches("matchList", $("searchMatch").value, $("statusFilter").value);
+        renderMatches("allMatchList", $("searchAll").value, $("statusAll").value);
+        $("matchSummary").textContent = `${total} pertandingan · ${done} selesai · ${live} berlangsung · ${remaining - live} belum dimulai`;
+        let sel = $("editMatch"),
+          old = sel.value;
+        sel.innerHTML = matches.map((m) => `<option value="${esc(m.id)}">${esc(m.id)} · ${esc(getTeam(m.a))} vs ${esc(getTeam(m.b))} · ${esc(statusFor(m))}</option>`).join("");
+        if (matches.some((m) => m.id === old)) sel.value = old;
+        let opp = $("teamOpponent"),
+          oldTeam = opp.value;
+        opp.innerHTML = active.map((t) => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join("");
+        if (active.some((t) => t.id === oldTeam)) opp.value = oldTeam;
+        renderOpponents();
+      }
+      function renderOpponents() {
+        const id = $("teamOpponent").value,
+          t = teams.find((x) => x.id === id);
+        if (!t) {
+          $("opponentList").innerHTML = '<div class="empty">Tambahkan tim terlebih dahulu.</div>';
+          return;
+        }
+        const list = matches.filter((m) => m.a === id || m.b === id);
+        $("opponentList").innerHTML =
+          list
+            .map((m) => {
+              const ownA = m.a === id,
+                has = m.scoreA != null && m.scoreB != null,
+                own = has ? (ownA ? m.scoreA : m.scoreB) : null,
+                opp = has ? (ownA ? m.scoreB : m.scoreA) : null;
+              return `<div class="match"><div class="matchhead"><strong>${esc(t.name)} vs ${esc(getTeam(ownA ? m.b : m.a))}</strong><span class="status ${m.status === "Selesai" ? "done" : m.status === "Berlangsung" ? "live" : ""}">${m.status === "Belum" ? "Belum bertanding" : esc(m.status)}</span></div><div class="versus"><div class="side">${esc(t.name)}</div><div class="score">${has ? `${own} – ${opp}` : "— : —"}</div><div class="side">${esc(getTeam(ownA ? m.b : m.a))}</div></div></div>`;
+            })
+            .join("") || '<div class="empty">Tidak ada lawan.</div>';
+      }
+      function switchTab(id) {
+        document.querySelectorAll(".view").forEach((v) => v.classList.toggle("hidden", v.id !== id));
+        document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === id));
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+      $("teamOpponent").addEventListener("change", renderOpponents);
+      ["searchMatch", "statusFilter", "searchAll", "statusAll"].forEach((id) => $(id).addEventListener(id.startsWith("search") ? "input" : "change", render));
+      function msg(s) {
+        $("adminMsg").textContent = s;
+      }
+      function selected() {
+        return matches.find((m) => m.id === $("editMatch").value);
+      }
+      function getApi() {
+        const u = $("apiUrl").value.trim();
+        if (u) apiUrl = u;
+        return apiUrl;
+      }
+      async function loadData(showMsg = false) {
+        const url = getApi();
+        if (!url) {
+          $("connection").textContent = "● URL API BELUM DIISI";
+          if (showMsg) msg("Masukkan URL Web App Google Apps Script yang berakhiran /exec.");
+          return;
+        }
+        try {
+          $("connection").textContent = "● MENGHUBUNGKAN";
+          const res = await fetch(url + (url.includes("?") ? "&" : "?") + "action=publicData&_=" + Date.now(), { cache: "no-store" });
+          const json = await res.json();
+          if (!json.ok) throw Error(json.error || "Respons API tidak valid");
+          const d = json.data;
+          teams = d.teams.map((t) => ({ ...t, active: true }));
+          matches = d.matches.map((m) => ({ ...m, scoreA: m.scoreA == null ? null : Number(m.scoreA), scoreB: m.scoreB == null ? null : Number(m.scoreB), round: m.round || null }));
+          $("eventTitle").textContent = d.eventTitle || "Badminton Championship";
+          $("eventSub").textContent = `Round robin · Target ${d.targetScore || 42} poin · Tukar sisi saat ${d.switchSideAt || 21}`;
+          $("connection").textContent = "● TERHUBUNG";
+          $("connection").style.borderColor = "#74c89b";
+          render();
+          if (showMsg) msg("Data berhasil dimuat dari Google Sheets.");
+        } catch (e) {
+          $("connection").textContent = "● GAGAL TERHUBUNG";
+          if (showMsg) msg("Gagal membaca data. Periksa URL /exec, izin deployment, dan koneksi internet. Detail: " + e.message);
+        }
+      }
+      async function postAction(payload) {
+        const url = getApi(),
+          key = $("adminKey").value;
+        if (!url) return msg("Masukkan URL Web App /exec.");
+        if (!key) return msg("Masukkan kunci operator ADMIN_KEY.");
+        payload.adminKey = key;
+        try {
+          msg("Mengirim perubahan ke Google Sheets…");
+          await fetch(url, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) });
+          msg("Permintaan dikirim. Memuat ulang data dari Google Sheets…");
+          setTimeout(() => loadData(true), 1800);
+        } catch (e) {
+          msg("Pengiriman gagal: " + e.message + ". Coba lagi atau periksa deployment Apps Script.");
+        }
+      }
+      $("saveScore").addEventListener("click", () => {
+        const m = selected(),
+          rawA = $("scoreA").value.trim(),
+          rawB = $("scoreB").value.trim(),
+          a = Number(rawA),
+          b = Number(rawB);
+        if (!m) return msg("Pilih pertandingan.");
+        if (rawA === "" || rawB === "" || !Number.isInteger(a) || !Number.isInteger(b) || a < 0 || b < 0) return msg("Masukkan kedua skor sebagai bilangan bulat positif atau nol.");
+        if (Math.max(a, b) < 42 || Math.abs(a - b) < 2) return msg("Skor akhir sah jika minimal satu tim mencapai 42 poin dan unggul sekurang-kurangnya 2 poin, misalnya 42–40, 43–41, atau 41–43.");
+        postAction({ action: "saveScore", matchId: m.id, scoreA: a, scoreB: b });
+      });
+      $("setLive").addEventListener("click", () => {
+        const m = selected();
+        if (!m) return msg("Pilih pertandingan.");
+        postAction({ action: "setStatus", matchId: m.id, status: "Berlangsung" });
+      });
+      $("clearScore").addEventListener("click", () => {
+        const m = selected();
+        if (!m) return msg("Pilih pertandingan.");
+        if (!confirm("Batalkan hasil pertandingan ini?")) return;
+        postAction({ action: "clearResult", matchId: m.id });
+      });
+      $("addTeam").addEventListener("click", () => {
+        const name = $("newTeam").value.trim();
+        if (!name) return msg("Masukkan nama tim.");
+        postAction({ action: "addTeam", teamName: name });
+      });
+      $("saveApi").addEventListener("click", () => {
+        const u = $("apiUrl").value.trim();
+        if (!u.startsWith("https://script.google.com/macros/s/") || !u.endsWith("/exec")) return msg("URL harus berupa URL Web App Google Apps Script yang berakhiran /exec.");
+        apiUrl = u;
+        localStorage.setItem("badminton_api_url", u);
+        loadData(true);
+      });
+      $("apiUrl").value = apiUrl;
+      loadData(true);
+      setInterval(() => loadData(false), 30000);
+    </script>
+  </body>
+</html>
